@@ -706,7 +706,7 @@ void PngWolf::log_summary() {
       best_genomes.back()->score(),
       difftime(time(NULL), program_begun_at),
       genomes_evaluated,
-      best_deflated.size(),
+      (unsigned)best_deflated.size(),
       -diff);
   }
 
@@ -723,7 +723,7 @@ void PngWolf::log_analysis() {
   fprintf(stdout, "---\n"
     "# %u x %u pixels at depth %u (mode %u) with IDAT %u bytes (%u deflated)\n",
     ihdr.width, ihdr.height, ihdr.depth, ihdr.color,
-    original_inflated.size(), original_deflated.size());
+    (unsigned)original_inflated.size(), (unsigned)original_deflated.size());
 
   if (!verbose_analysis)
     return;
@@ -746,10 +746,10 @@ void PngWolf::log_analysis() {
     this->ihdr.color,
     this->ihdr.depth,
     this->ihdr.interlace,
-    this->scanline_width,
-    this->scanline_delta,
-    this->original_inflated.size(),
-    this->original_deflated.size());
+    (unsigned)this->scanline_width,
+    (unsigned)this->scanline_delta,
+    (unsigned)this->original_inflated.size(),
+    (unsigned)this->original_deflated.size());
 
   std::list<PngChunk>::iterator c_it;
 
@@ -772,7 +772,7 @@ void PngWolf::log_analysis() {
 
     // TODO: htonl is probably not right here
     for (it = invis_colors.begin(); it != invis_colors.end(); ++it) {
-      fprintf(stdout, "  - %08X # %u times\n", htonl(it->first), it->second);
+      fprintf(stdout, "  - %08X # %u times\n", htonl(it->first), (unsigned)it->second);
       total += it->second;
     }
 
