@@ -1,3 +1,6 @@
+pngwolf
+=======
+
 `pngwolf` is a tool to minimize the size of PNG image files. There are
 a number of factors that affect the size of PNG image files, such as
 the number of colors in the image and whether the image data is stored
@@ -34,27 +37,27 @@ gets bored, it uses 7-Zip to generate the final result.
 
 Doing this `pngwolf` is able to compress some images better than other
 optimizers (like `OptiPNG`, `AdvanceCOMP`, `pngcrush`, and `pngout`),
-either because it finds better filter combinations then they do, or be-
-cause it uses 7-Zip's Deflate implementation (`AdvanceCOMP` uses that
-aswell, although an older version which sometimes performs better and
-sometimes worse, for reasons yet to be studied). It does not attempt to
-make other optimizations, like converting indexed images to RGB format.
+either because it finds better filter combinations then they do, or because
+it uses 7-Zip's Deflate implementation (`AdvanceCOMP` uses that aswell,
+although an older version which sometimes performs better and sometimes
+worse, for reasons yet to be studied). It does not attempt to make other
+optimizations, like converting indexed images to RGB format.
 
-None of the tools mentioned, including `pngwolf` follow any kind of ho-
-listic approach to PNG optimization, so to get the best results they
+None of the tools mentioned, including `pngwolf` follow any kind of
+holistic approach to PNG optimization, so to get the best results they
 need to be used in combination (and sometimes applying them repeatedly
 or in different orders provides the best results). As far as I can tell
 most other tools do not try to preserve the filter combination in the
-original image, so `pngwolf` should usually be used last or second-to-
-last in the optimization process.
+original image, so `pngwolf` should usually be used last or
+second-to-last in the optimization process.
 
 For images that are already optimized using all the other tools, there
-is about `1%` further reduction to be expected from `pngwolf` for suit-
-able images. Still, it should be rare to find images on the Web that
+is about `1%` further reduction to be expected from `pngwolf` for
+suitable images. Still, it should be rare to find images on the Web that
 `pngwolf` cannot compress a little bit further.
 
-The tool suffers from the lack of a Deflate encoder that makes it easy
-store the results of data analysis (where are duplicate substrings in
+The tool suffers from the lack of a Deflate encoder that makes it easy to
+store the results of data analysis (where there are duplicate substrings in
 the data) and combine them (if you recall the earlier example where it
 takes the head of one combination and the tail of another, an encoder
 would not have to analyze all of the two parts again, only where they
@@ -63,8 +66,8 @@ best results.
 
 Regardless of the performance deficiency `pngwolf` is well-suited as a
 research tool to come up with better heuristics for filter selection,
-or to extend the genetic algorithm approach to other aspects of PNG op-
-timization (the main thing being considered is re-arranging the entries
+or to extend the genetic algorithm approach to other aspects of PNG
+optimization (the main thing being considered is re-arranging the entries
 in color palettes so the image data compresses better). The tool logs
 extensive information in a YAML-based machine-readable format while it
 attempts to optimize images which should aid in that.
@@ -75,25 +78,38 @@ optimizations at well-specified points (such as the total time used),
 and if you start an optimization run but grow impatient and abort the
 program, results should not get lost, but should be stored anyway.
 
-To compile `pngwolf` you need three additional libraries:
+Compiling
+---------
 
-  * GAlib http://lancet.mit.edu/ga/dist/
-  * 7-Zip http://www.7-zip.org/download.html ("7-Zip Source code")
-  * zlib  http://zlib.net/
+To compile `pngwolf` on a *nix system. You may run the build script:
+
+    % ./build.sh
+
+Alternatively, you may compile `pngwolf` manually. To do so, you need
+three additional libraries:
+
+  * [GAlib](http://lancet.mit.edu/ga/dist/)
+  * [7-Zip](http://www.7-zip.org/download.html) _See: "7-Zip Source code"_
+  * [zlib](http://zlib.net/)
 
 Put these into `galib`, `7zip`, and `zlib` sub-directories into the
-directory where pngwolf.cxx is located, and then either use the CMake
-utility (http://www.cmake.org/) on the `CMakeLists.txt`, or simply
+directory where `pngwolf.cxx` is located, and then either use the [CMake
+utility](http://www.cmake.org/) on the `CMakeLists.txt`, or simply
 specify all the files specified in `CMakeLists.txt` as input to your
 compiler. The latter would look like:
 
-  % gcc -I7zip/CPP -Igalib pngwolf.cxx galib/ga/GA1DArrayGenome.C 
+    % gcc -I7zip/CPP -Igalib pngwolf.cxx galib/ga/GA1DArrayGenome.C 
       galib/ga/GAAllele.C ... -lstdc++ -o pngwolf
 
-If you are using 7-Zip 9.20 there are two bugs in 7-Zip that prevent
-gcc building https://sourceforge.net/support/tracker.php?aid=3200655
-it. To address that, apply the patch `sevenzip920.patch` like so:
+__NOTE:__ If you are using 7-Zip 9.20 there are
+[two bugs](https://sourceforge.net/support/tracker.php?aid=3200655) in
+7-Zip that prevent gcc (and clang) from building  it. To address that,
+apply the patch `sevenzip920.patch` like so:
 
-  % patch -p 0 < sevenzip920.patch
+    % patch -p0 < patches/sevenzip920.patch
 
-I've done this successfully with Visual C++ 2010 and Cygwin gcc 4.3.4.
+__NOTE:__ If you are using GALib 4.2.7 there is
+[a bug](http://clang.debian.net/status.php?version=3.3&key=USE_OF_UNDECLARED_IDENTIFIER) that prevents gcc (and clang) from building it. To address that, apply the
+patch `galib247.patch` like so:
+
+    % patch -p0 < patches/galib247.patch
