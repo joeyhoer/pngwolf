@@ -8,15 +8,16 @@ SRC="src"
 mkdir -p $SRC
 
 echo "Downloading GALib"
-curl -#L "http://lancet.mit.edu/ga/dist/galib247.tgz" > "$SRC/galib.tgz"
+curl -q#L "http://lancet.mit.edu/ga/dist/galib247.tgz" > "$SRC/galib.tgz"
 
 echo "Downloading 7-Zip"
-# I would rather use the 'latest' version, but it needs to be patched
-# http://sourceforge.net/projects/p7zip/files/latest/download
-curl -#L "http://sourceforge.net/projects/sevenzip/files/7-Zip/9.20/7z920.tar.bz2/download" > "$SRC/p7zip.tar.bz2"
+# This could break as it's using the "latest" version
+curl -q#L "http://sourceforge.net/projects/p7zip/files/latest/download" > "$SRC/p7zip.tar.bz2"
+# Alternatively, specify a specific version
+# curl -#L "http://sourceforge.net/projects/sevenzip/files/7-Zip/9.20/7z920.tar.bz2/download" > "$SRC/p7zip.tar.bz2"
 
 echo "Downloading zlib"
-curl -#L "http://zlib.net/zlib-1.2.8.tar.xz" > "$SRC/zlib.tar.xz"
+curl -q#L "http://zlib.net/zlib-1.2.8.tar.xz" > "$SRC/zlib.tar.xz"
 
 
 # Extract source files
@@ -26,7 +27,7 @@ tar xf "$SRC/galib.tgz"     --strip-components 1  -C "galib"
 
 echo "Extracting 7-Zip"
 mkdir -p "7zip"
-tar xf "$SRC/p7zip.tar.bz2" -C "7zip"
+tar xf "$SRC/p7zip.tar.bz2" --strip-components 1  -C "7zip"
 
 echo "Extracting zlib"
 mkdir -p "zlib"
@@ -36,10 +37,13 @@ tar xf "$SRC/zlib.tar.xz"   --strip-components 1  -C "zlib"
 PAT="patches"
 
 echo "Patching GALib"
-patch -p 0 < "$PAT/galib247.patch"
+patch -fp 0 < "$PAT/galib247.patch"
 
 echo "Patching 7-Zip"
-patch -p 0 < "$PAT/sevenzip920.patch"
+patch -fp 0 < "$PAT/sevenzip9201.patch"
+# Remove references to Visual Studio precompiled headers
+grep -lR '#include "StdAfx.h"' ./7zip/ | xargs sed -i "" -E 's/#include "StdAfx.h"//g'
+
 
 # Make
 cmake CMakeLists.txt
