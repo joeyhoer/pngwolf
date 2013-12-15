@@ -46,5 +46,6 @@ grep -lR '#include "StdAfx.h"' ./7zip/ | xargs sed -i "" -E 's/#include "StdAfx.
 
 
 # Make
-cmake CMakeLists.txt
-make
+echo "Making binary"
+cmake -H. -Bbuild #CMakeLists.txt
+make -C build/
