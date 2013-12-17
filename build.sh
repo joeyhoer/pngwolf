@@ -19,6 +19,10 @@ curl -q#L "http://sourceforge.net/projects/p7zip/files/latest/download" > "$SRC/
 echo "Downloading zlib"
 curl -q#L "http://zlib.net/zlib-1.2.8.tar.xz" > "$SRC/zlib.tar.xz"
 
+echo "Cloning Zopfli"
+git clone https://code.google.com/p/zopfli/
+rm -Rf "$SRC/.git"
+
 
 # Extract source files
 echo "Extracting GALib"
@@ -32,6 +36,7 @@ tar xf "$SRC/p7zip.tar.bz2" --strip-components 1  -C "7zip"
 echo "Extracting zlib"
 mkdir -p "zlib"
 tar xf "$SRC/zlib.tar.xz"   --strip-components 1  -C "zlib"
+
 
 # Apply patches
 PAT="patches"
