@@ -21,7 +21,7 @@ curl -q#L "http://zlib.net/zlib-1.2.8.tar.xz" > "$SRC/zlib.tar.xz"
 
 echo "Cloning Zopfli"
 git clone https://code.google.com/p/zopfli/
-rm -Rf "$SRC/.git"
+rm -Rf "$SRC/zopfli/.git"
 
 
 # Extract source files
