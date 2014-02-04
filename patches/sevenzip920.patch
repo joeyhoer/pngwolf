@@ -20,7 +20,6 @@ diff -pur 7zip/C/Alloc.h 7zip/C/Alloc.h
  
  #ifdef __cplusplus
  extern "C" {
-Only in 7zip/CPP: .DS_Store
 diff -pur 7zip/CPP/7zip/Common/StreamObjects.cpp 7zip/CPP/7zip/Common/StreamObjects.cpp
 --- 7zip/CPP/7zip/Common/StreamObjects.cpp	2013-11-27 19:42:23.000000000 -0500
 +++ 7zip/CPP/7zip/Common/StreamObjects.cpp	2013-11-27 19:20:46.000000000 -0500
