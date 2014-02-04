@@ -22,27 +22,27 @@ PAT="patches"
 # Download dependancies
 ##
 if [ ! -f "$TMP/galib.tgz" ]; then
-	echo "Downloading GALib"
-	curl -q#L "http://lancet.mit.edu/ga/dist/galib247.tgz" > "$TMP/galib.tgz"
+    echo "Downloading GALib"
+    curl -q#L "http://lancet.mit.edu/ga/dist/galib247.tgz" > "$TMP/galib.tgz"
 else
-	echo "GALib source exists... skipping"
+    echo "GALib source exists... skipping"
 fi
 
 if [ ! -f "$TMP/p7zip.tar.bz2" ]; then
-	echo "Downloading 7-Zip"
-	# This could break as it's using the "latest" version
-	curl -q#L "http://sourceforge.net/projects/p7zip/files/latest/download" > "$TMP/p7zip.tar.bz2"
-	# Alternatively, specify a specific version
-	# `projects/sevenzip/files/7-Zip/9.20/7z920.tar.bz2/download`
+    echo "Downloading 7-Zip"
+    # This could break as it's using the "latest" version
+    curl -q#L "http://sourceforge.net/projects/p7zip/files/latest/download" > "$TMP/p7zip.tar.bz2"
+    # Alternatively, specify a specific version
+    # `projects/sevenzip/files/7-Zip/9.20/7z920.tar.bz2/download`
 else
-	echo "7-Zip source exists... skipping"
+    echo "7-Zip source exists... skipping"
 fi
 
 if [ ! -f "$TMP/zlib.tar.gz" ]; then
-	echo "Downloading zlib"
-	curl -q#L "http://zlib.net/zlib-1.2.8.tar.gz" > "$TMP/zlib.tar.gz"
+    echo "Downloading zlib"
+    curl -q#L "http://zlib.net/zlib-1.2.8.tar.gz" > "$TMP/zlib.tar.gz"
 else
-	echo "zlib source exists... skipping"
+    echo "zlib source exists... skipping"
 fi
 
 
@@ -66,18 +66,31 @@ tar -xzf "$TMP/zlib.tar.gz"   --strip-components 1  -C "$SRC/zlib"
 # Apply patches
 ##
 echo "Patching GALib"
-patch -d "$SRC" -fp 0 < "$PAT/galib247.patch"
+patch -d "$SRC" -sfp 0 < "$PAT/galib247.patch"
 
 echo "Patching 7-Zip"
-patch -d "$SRC" -fp 0 < "$PAT/sevenzip9201.patch"
+patch -d "$SRC" -sfp 0 < "$PAT/sevenzip9201.patch"
 # Patch using bash
 # Remove references to Visual Studio precompiled headers
-grep -lR '#include "StdAfx.h"' "$SRC/7zip" | xargs sed -i "" -E 's/#include "StdAfx.h"//g'
+grep -lR '#include "StdAfx.h"' "$SRC/7zip/CPP" | xargs -I % bash -c "sed -i '' -E 's/#include \"StdAfx.h\"//g' %;"
+# Make bash patch more verbose with:
+# echo -n 'patching file '; echo % | cut -d'/' -f2-;
 
 
 ##
 # Make binary
 ##
 echo "Making binary"
-cmake -H. -Bbuild #CMakeLists.txt
-make -sC build/
+cmake -H. -Bbuild > /dev/null 2>&1 #CMakeLists.txt
+make -sC build/ > /dev/null 2>&1
+
+
+##
+# Check 
+##
+if [ -f "bin/pngwolf" ]; then
+    chmod +x "bin/pngwolf"
+    echo 'Success! pngwolf built'
+else
+    echo 'Failed buiding pngwolf'
+fi
